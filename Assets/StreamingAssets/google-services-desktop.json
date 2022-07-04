@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "841117827981",
+    "project_id": "bookmanager-e024b",
+    "storage_bucket": "bookmanager-e024b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841117827981:android:84551b101927c4ddeb33c4",
+        "android_client_info": {
+          "package_name": "com.tanle.bookmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "841117827981-e7o086447r9s4uf2f930psi3bg7v5qrl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwi8mHX9vVc7yHgwTTYUYNITnEWAT9U_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "841117827981-e7o086447r9s4uf2f930psi3bg7v5qrl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
