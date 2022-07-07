@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,10 +25,17 @@ public class ShopController : MonoBehaviour
     [SerializeField]
     private GameObject infoPopup;
     [SerializeField]
+    private GameObject editUserPopup;
+    [SerializeField]
     private TMPro.TMP_InputField searchText;
 
+    [SerializeField]
+    private GameObject loadingShop;
+    [SerializeField]
+    private GameObject loadingUpdateUser;
 
     private bool isShowInfoPopup;
+    private bool isResetingBookShop;
 
     private void Awake()
     {
@@ -42,19 +50,20 @@ public class ShopController : MonoBehaviour
         {
             Instance = this;
         }
+        isResetingBookShop = false;
 
         if (UserManager.Instance.getUserDetail() != null)
         {
             bookRecommend = new List<BookDetail>();
             GetNumberBookRecommend(12);       
             GetAllBook();
-            GetAllFeedBackByUsername(UserManager.Instance.getUserDetail().username);
         }
         bookDetailPopup.gameObject.SetActive(false);
         orderPopup.gameObject.SetActive(false);
         orderedPopup.gameObject.SetActive(false);
         isShowInfoPopup = false;
         infoPopup.gameObject.SetActive(false);
+        loadingUpdateUser.SetActive(false);
     }
 
     public void OnClick_SearchBookByName()
@@ -70,6 +79,7 @@ public class ShopController : MonoBehaviour
 
     public void SetBook(List<BookDetail> bookDetails)
     {
+        loadingShop.SetActive(false);
         //this.bookDetails = bookDetails;
         allPack.SetBookPack(bookDetails);
         UserManager.Instance.SetAllBook(bookDetails);
@@ -99,7 +109,15 @@ public class ShopController : MonoBehaviour
 
     public void GetAllBook()
     {
-        APIHelper.Instance.GetAllBooks();
+        if (!isResetingBookShop)
+        {
+            Debug.Log("Reset ");
+            GetAllFeedBackByUsername(UserManager.Instance.getUserDetail().username);
+            isResetingBookShop = true;
+            loadingShop.SetActive(true);
+            APIHelper.Instance.GetAllBooks();
+            DOVirtual.DelayedCall(3f, () => { isResetingBookShop = false; });
+        }
     }
 
     public void GetAllFeedBackByUsername(string username)
@@ -145,5 +163,23 @@ public class ShopController : MonoBehaviour
     public void OnClick_Logout()
     {
         SceneManager.LoadScene("Main");
+    }
+
+    public void OnClick_EditUser()
+    {
+        editUserPopup.SetActive(true);
+    }
+
+    public void OnScrollShopChange(Vector2 value)
+    {
+        if (value.y > 1.1) 
+        {
+            GetAllBook();
+        }     
+    }    
+
+    public void SetLoadingPopup(bool isActive)
+    {
+        loadingUpdateUser.SetActive(isActive);
     }
 }

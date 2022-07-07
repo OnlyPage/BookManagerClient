@@ -24,6 +24,8 @@ public class LoginController : MonoBehaviour
     [SerializeField] private Toggle isCustomer;
 
     [SerializeField] private TMPro.TextMeshProUGUI textError;
+    [SerializeField] private GameObject loadingObject;
+
 
     public static LoginController instance;
     private string passwordTemp;
@@ -35,12 +37,13 @@ public class LoginController : MonoBehaviour
             instance = this;
         }
         registerPopup.SetActive(false);
-
+        loadingObject.SetActive(false);
 
     }
 
     public void OnClick_Login()
     {
+        loadingObject.SetActive(true);
         APIHelper.Instance.Login(userName.text, password.text);
     }
 
@@ -101,7 +104,8 @@ public class LoginController : MonoBehaviour
             return;
         }
 
-        int roleId = isCustomer.isOn ? 1 : 0; 
+        int roleId = isCustomer.isOn ? 1 : 0;
+        loadingObject.SetActive(true);
         APIHelper.Instance.Register(userNameRegister.text, passwordRegister.text, emailRegister.text, phoneRegister.text, addressRegister.text, roleId);
     }
 
@@ -120,6 +124,7 @@ public class LoginController : MonoBehaviour
 
     public void SetTextError(string text)
     {
+        loadingObject.SetActive(false);
         textError.gameObject.SetActive(true);
         textError.text = text;
         DOVirtual.DelayedCall(2.0f, () => { textError.gameObject.SetActive(false); });

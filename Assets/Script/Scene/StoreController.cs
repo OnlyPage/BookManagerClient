@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,8 +20,16 @@ public class StoreController : MonoBehaviour
     private AddBookPopup addBookPopup;
     [SerializeField]
     private GameObject infoPopup;
+    [SerializeField]
+    private GameObject editUserPopup;
 
     private bool isShowInfoPopup;
+
+    [SerializeField]
+    private GameObject loadingShop;
+    [SerializeField]
+    private GameObject loadingUser;
+    private bool isResetingBookShop;
 
     private void Awake()
     {
@@ -36,6 +45,8 @@ public class StoreController : MonoBehaviour
             Instance = this;
         }
 
+        loadingShop.SetActive(false);
+        isResetingBookShop = false;
         GetAllBook();
         GetAllBookByStoreName(UserManager.Instance.getUserDetail().username);
         GetAllOrderByStoreName(UserManager.Instance.getUserDetail().username);
@@ -74,6 +85,7 @@ public class StoreController : MonoBehaviour
 
     public void SetBookStore(List<BookDetail> bookDetails)
     {
+        loadingShop.SetActive(false);
         //this.bookDetails = bookDetails;
         storePack.SetBookPack(bookDetails);
     }
@@ -95,7 +107,14 @@ public class StoreController : MonoBehaviour
 
     public void GetAllBook()
     {
-        APIHelper.Instance.GetAllBooks();
+        if (!isResetingBookShop)
+        {
+            Debug.Log("Reset ");
+            isResetingBookShop = true;
+            loadingShop.SetActive(true);
+            APIHelper.Instance.GetAllBooks();
+            DOVirtual.DelayedCall(3f, () => { isResetingBookShop = false; });
+        }
     }    
 
     public void SetAllBook(List<BookDetail> bookDetails)
@@ -163,5 +182,24 @@ public class StoreController : MonoBehaviour
     public void OnClick_Logout()
     {
         SceneManager.LoadScene("Main");
+    }
+
+    public void OnClick_EditUser()
+    {
+        editUserPopup.SetActive(true);
+    }
+
+    public void OnScrollShopChange(Vector2 value)
+    {
+        Debug.Log(value.y);
+        if (value.y > 1.06)
+        {
+            GetAllBook();
+        }
+    }
+
+    public void SetLoadingPopup(bool isActive)
+    {
+        loadingUser.SetActive(isActive);
     }
 }

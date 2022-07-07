@@ -92,6 +92,43 @@ public class APIHelper : Singleton<APIHelper>
         }
     }
 
+    public async void UpdateUser(string password, string email, string phoneNumber, string address)
+    {
+        string username = UserManager.Instance.getUserDetail().username;
+        var values = new Dictionary<string, string>
+          {
+              { "username", username },
+              { "password", password},
+              { "phoneNumber", phoneNumber},
+              { "email", email},
+              { "address", address},
+          };
+
+        var content = new FormUrlEncodedContent(values);
+
+        var response = await client.PutAsync(baseUrl + "users", content);
+
+        var responseString = await response.Content.ReadAsStringAsync();
+        if (UserManager.Instance.getUserDetail()?.roleDetail == "CUSTOMER")
+        {
+            ShopController.Instance?.SetLoadingPopup(false);
+        }
+        else
+        {
+            StoreController.Instance?.SetLoadingPopup(false);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            UserManager.Instance.SetUserDetail(Cutil.ImportJsonObjest<UserDetail>(responseString));         
+        }
+        else
+        {
+            var reponseError = JsonUtility.FromJson<ResponseClass>(responseString);
+            ErrorPopup.Instance?.InitText(reponseError.message);
+        }
+    }
+
     public async void GetAllBooks()
     {
         var response = await client.GetAsync(baseUrl + "book/");

@@ -53,6 +53,7 @@ public class BookDetailPopup : MonoBehaviour
         {
             Destroy(comment.gameObject);
         }
+        commentPrefabs.Clear();
     }
 
     public void AddFeedback(FeedbackDetail feedbackDetail)
